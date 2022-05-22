@@ -1,4 +1,5 @@
 
+
 const createArticles = (data) => new Promise((resolve, reject) => {
     const li = document.createElement('li');
     li.className = 'news-item';
@@ -54,15 +55,13 @@ const getPromises = newsList => {
 const insertArticles = async promiseList => Promise.all(promiseList);
 
 export const getArticles = (newsList, isHeadlines) => {
-    if (newsList.length >= 8) {
-        newsList = newsList.slice(0, 8);
-    }
     const promises = getPromises(newsList);
     insertArticles(promises).then(data => {
         if (isHeadlines) {
             const news_list = document.querySelector('#news_list_headlines');
             news_list.textContent = '';
             news_list.append(...data);
+
         } else {
             const news_list = document.querySelector('#news_list');
             news_list.textContent = '';

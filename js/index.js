@@ -1,8 +1,15 @@
 import { getArticles } from './modules/createElements.js';
 
-const setResultInfo = () => {
-    const searchResultInfo = document.querySelector('#searchResultInfo');
+const setLimit = (newsList, limit) => {
+    if (newsList.length >= limit) 
+        newsList = newsList.slice(0, limit);
     
+    return newsList;
+}
+
+const setSearchResultInfo = (searchValue, resultCount) => {
+    const setSearchResultInfo = document.querySelector('#searchResultInfo');
+    setSearchResultInfo.textContent = `По вашему запросу ${searchValue} найдено ${resultCount} результатов`;
 };
 
 const getHeadlines = (count, country) => {
@@ -13,8 +20,8 @@ const getHeadlines = (count, country) => {
     })
     .then(data => data.json())
     .then(response => {
-        console.log(response.articles);
-        getArticles(response.articles.slice(0, count), true);
+        const articles = setLimit(response.articles, count);
+        getArticles(articles, true);
     });
 };
 
@@ -30,10 +37,17 @@ form.addEventListener('submit', e => {
     })
     .then(data => data.json())
     .then(response => {
-        getArticles(response.articles, false);
+        const articles = setLimit(response.articles, 8);
+        getArticles(articles, false);
+        setSearchResultInfo(params.search, articles.length);
     });
 
     getHeadlines(4, params.country);
+
 });
 
+form.country.addEventListener('change', () => {
+    getHeadlines(8, form.country.value);
+});
 
+getHeadlines(8, 'ru');
